@@ -6,7 +6,7 @@ from dashboard.models import Client
 
 
 class DashBoardTestCase(TestCase):
-    fixtures = ["prices", "clients", "consumptions"]
+    fixtures = ["clients", "consumptions"]
 
 
 class HttpCodeTestCase(DashBoardTestCase):
@@ -16,8 +16,8 @@ class HttpCodeTestCase(DashBoardTestCase):
     def assertSuccess(self, response, msg_prefix):
         status_code = response.status_code
         failure_msg = (
-            msg_prefix and msg_prefix + " " or ""
-        ) + f"expected success status code (200-299)"
+                              msg_prefix and msg_prefix + " " or ""
+                      ) + f"expected success status code (200-299)"
         self.assertGreaterEqual(status_code, 200, failure_msg)
         self.assertLess(status_code, 300, failure_msg)
 
