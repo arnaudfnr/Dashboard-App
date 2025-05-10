@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useAppDispatch, useAppSelector, useDebouncedSearch } from '../../app/hooks';
 import { setQuery, searchResults, selectSearchBar } from './searchBarSlice';
 import styles from './SearchBar.module.css';
-import { Client } from '../../models/client';
+import Client from '../../models/client';
 import { Suggestions } from './Suggestions';
 
 // Define the state interface

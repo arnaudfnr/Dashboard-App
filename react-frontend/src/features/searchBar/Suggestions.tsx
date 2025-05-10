@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './SearchBar.module.css';
-import { Client } from '../../models/client';
+import Client from '../../models/client';
 
 interface SuggestionsProps {
     results: Client[];

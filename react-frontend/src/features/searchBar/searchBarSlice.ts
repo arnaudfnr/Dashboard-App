@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import { fetchClients } from './searchBarAPI';
-import { Client } from '../../models/client';
+import Client from '../../models/client';
 import { SearchBarState } from './SearchBar';
 
 
