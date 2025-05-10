@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     "corsheaders",
     "dashboard.apps.DashboardConfig",
     "dashboard.apps.DashboardAdminConfig",
-    "api.apps.ApiConfig",
 ]
 
 MIDDLEWARE = [
@@ -108,6 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ( 'rest_framework.permissions.AllowAny', ),
 }
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]

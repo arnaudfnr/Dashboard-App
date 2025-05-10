@@ -1,11 +1,32 @@
 from datetime import date
-
 from django.shortcuts import render
-import plotly.express as px
 from dashboard.models import Consumption
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status, generics, filters
+
+import plotly.express as px
+
+from dashboard.models import Client
+from .serializer import ClientSerializer
 import logging
 
 logger = logging.getLogger(__name__)
+
+@api_view(['GET'])
+def get_client(request, pk):
+    try:
+        logger.debug("Fetching client with ID: %s", pk)
+        client = Client.objects.get(pk=pk)
+    except Client.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = ClientSerializer(client)
+        return Response(serializer.data)
+
+    return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 def consumption_view(request, client_id):
@@ -21,11 +42,9 @@ def consumption_view(request, client_id):
     return render(request, "dashboard/consumption_detail.html", context)
 
 
-def search_client_view(request):
-    """
-    Search clients
-
-    TODO client.has_elec_heating should be set
-    TODO client.has_anomaly should be set
-    """
-    return render(request, "dashboard/search_client.html")
+class SearchClientView(generics.ListAPIView):
+    serializer_class = ClientSerializer
+    queryset = Client.objects.all().annotate_has_elec_heating().annotate_anomaly()
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['id', 'full_name']
+    search_fields = ['full_name']

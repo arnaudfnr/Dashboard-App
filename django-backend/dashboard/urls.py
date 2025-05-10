@@ -1,13 +1,11 @@
 from django.urls import path
 
-from dashboard.admin import ClientsListView
-from dashboard.views import consumption_view, search_client_view
+from .views import consumption_view, get_client, SearchClientView
 
 app_name = "dashboard"
 urlpatterns = [
-    path("", search_client_view, name="search_client"),
-    path("admin/clients", ClientsListView.as_view(), name="clients_list"),
-
+    path('api/clients/', SearchClientView.as_view()),
+    path('api/clients/<int:pk>/', get_client, name='get_client'),
     path(
         f"consumption/<int:client_id>",
         consumption_view,

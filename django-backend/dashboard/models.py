@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
-from django.db.models import F, Subquery, Sum
+from django.db.models import F, Subquery, Sum, OuterRef, Exists, Case, When
 from django.urls import reverse
 
 import logging
@@ -20,60 +20,49 @@ class MonthMixin(models.Model):
     class Meta:
         abstract = True
 
+class ClientQuerySet(models.QuerySet):
+    def _subquery_conso_over_months(self, months):
+        return Consumption.objects \
+            .filter(client_id=OuterRef("pk"), month__in=months) \
+            .values("client_id") \
+            .annotate(total_kwh_consumed=Sum('kwh_consumed')) \
+            .values('total_kwh_consumed')
+
+    def annotate_has_elec_heating(self):
+        cold_months_q = self._subquery_conso_over_months([11, 12, 1, 2, 3, 4])
+        hot_months_q = self._subquery_conso_over_months([5, 6, 7, 8, 9, 10])
+
+        has_elec_heating_case = Case(
+            When(cold_consumption__gt=2 * F("hot_consumption"), then=True),
+            default=False,
+            output_field=models.BooleanField()
+        )
+        return self \
+            .annotate(cold_consumption=Subquery(cold_months_q)) \
+            .annotate(hot_consumption=Subquery(hot_months_q)) \
+            .annotate(has_elec_heating=has_elec_heating_case)
+
+    def annotate_anomaly(self):
+        anomaly_q = Consumption.objects \
+            .filter(
+                client_id=OuterRef("pk"),
+                client__consumption__month=F('month'),
+                client__consumption__year=F('year') - 1,
+                client__consumption__kwh_consumed__lte=F('kwh_consumed') / 1.9,
+                client__consumption__client_id=F('client_id')
+            ) \
+            .order_by("-year", "-month")
+        return self \
+            .annotate(anomaly_year=Subquery(anomaly_q.values("year")[:1])) \
+            .annotate(anomaly_month=Subquery(anomaly_q.values("month")[:1])) \
+            .annotate(has_anomaly=Exists(anomaly_q))
 
 class Client(models.Model):
-    """
-    Store the client information
-    """
     full_name = models.CharField("full name", max_length=50)
-    has_elec_heat = models.BooleanField("has electrical heating", default=False)
-    has_anomaly = models.BooleanField("has anomaly", default=False)
-
-    class Meta:
-        ordering = ('id',)
-
-    def detect_anomaly(self, consumption):
-        anomalies = consumption.filter(
-            client_id=self.id,
-            client__consumption__month=F('month'),
-            client__consumption__year=F('year') - 1,
-            client__consumption__kwh_consumed__lte=F('kwh_consumed') / 1.9,
-            client__consumption__client_id=F('client_id')
-        ).order_by("-year", "-month")
-
-        logger.debug(f"SQL Query of anomalies: [START] {anomalies.query} [END]")
-        self.has_anomaly = anomalies.count() > 0
-
-        if self.has_anomaly:
-            anomaly_year = Subquery(anomalies.values("year")[:1])
-            anomaly_month = Subquery(anomalies.values("month")[:1])
-            anomaly = Anomaly.objects.create(client_id=self.id, year=anomaly_year, month=anomaly_month)
-            logger.info(f"New Anomaly detected: {anomaly}")
-
-        return self.has_anomaly
-
-    def get_cons_for_months(self, consumption, months):
-        cons = (consumption
-                .filter(client_id=self.id, month__in=months)
-                .order_by('-year').values("client_id")
-                .annotate(total_kwh_consumed=Sum('kwh_consumed')))
-        return 0 if len(cons) == 0 else cons.get()['total_kwh_consumed']
-
-    def detect_elec_heat(self, consumption):
-        winter_cons = self.get_cons_for_months(consumption, [1, 2])
-        summer_cons = self.get_cons_for_months(consumption, [7, 8])
-
-        logger.debug(f"winter cons: {winter_cons}")
-        logger.debug(f"summer cons: {summer_cons}")
-
-        self.has_elec_heat = winter_cons > 2 * summer_cons
-        return self.has_elec_heat
+    objects = ClientQuerySet.as_manager()
 
     def __str__(self):
-        return (f"Client {self.id}, "
-                f"Full Name: {self.full_name}, "
-                f"Has Electrical Heating: {self.has_elec_heat}, "
-                f"Has Anomaly: {self.has_anomaly}")
+        return f"Client {self.pk}: {self.full_name}"
 
 
 class Consumption(MonthMixin):
@@ -96,19 +85,3 @@ class Consumption(MonthMixin):
 
     def get_absolute_url(self):
         return reverse("dashboard:consumption_details", kwargs={"client_id": self.pk})
-
-
-class Anomaly(MonthMixin):
-    """
-    Store the detected anomaly on a client's consumption for a given year and month
-    """
-    client = models.ForeignKey(
-        "dashboard.Client", verbose_name="client", on_delete=models.CASCADE
-    )
-
-    class Meta:
-        unique_together = ("client", "month", "year")
-        ordering = ('client_id', '-year', '-month')
-
-    def __str__(self):
-        return f"Detected Anomaly: {self.client.id} ({self.month}/{self.year})"
