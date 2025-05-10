@@ -6,9 +6,9 @@ import styles from './SearchBar.module.css';
 
 export function SearchBar() {
   const dispatch = useAppDispatch();
-  const { query, results, loading, error } = useAppSelector(selectSearchBar) as unknown as {
+  const { query, results, loading, error } = useAppSelector(selectSearchBar) as {
     query: string;
-    results: { name: string }[];
+    results: string[];
     loading: boolean;
     error: string | null;
   };
@@ -32,7 +32,7 @@ export function SearchBar() {
         {error && <p>Error: {error}</p>}
         <ul>
           {results.map((result, index) => (
-            <li key={index}>{result.name}</li>
+            <li key={index}>{result}</li>
           ))}
         </ul>
       </div>
