@@ -1,9 +1,9 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
-import counterReducer from '../features/counter/counterSlice';
+import searchBarReducer from '../features/searchBar/searchBarSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    searchBar: searchBarReducer,
   },
 });
 
@@ -15,3 +15,4 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   unknown,
   Action<string>
 >;
+
