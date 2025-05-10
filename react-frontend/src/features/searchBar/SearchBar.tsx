@@ -2,16 +2,19 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { setQuery, searchResults, selectSearchBar } from './searchBarSlice';
 import styles from './SearchBar.module.css';
+import { Client } from '../../models/client';
 
+// Define the state interface
+export interface SearchBarState {
+  query: string;
+  results: Client[];
+  loading: boolean;
+  error: string | null;
+}
 
 export function SearchBar() {
   const dispatch = useAppDispatch();
-  const { query, results, loading, error } = useAppSelector(selectSearchBar) as {
-    query: string;
-    results: string[];
-    loading: boolean;
-    error: string | null;
-  };
+  const { query, results, loading, error } = useAppSelector(selectSearchBar) as SearchBarState;
 
   const handleSearch = () => {
     dispatch(searchResults(query));
@@ -32,7 +35,7 @@ export function SearchBar() {
         {error && <p>Error: {error}</p>}
         <ul>
           {results.map((result, index) => (
-            <li key={index}>{result}</li>
+            <li key={index}>{result.full_name}</li>
           ))}
         </ul>
       </div>

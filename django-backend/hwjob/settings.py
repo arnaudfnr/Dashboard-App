@@ -36,8 +36,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "rest_framework",
     'django_filters',
+    "rest_framework",
+    "corsheaders",
     "dashboard.apps.DashboardConfig",
     "dashboard.apps.DashboardAdminConfig",
     "api.apps.ApiConfig",
@@ -51,6 +52,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "hwjob.urls"
@@ -103,6 +105,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ( 'rest_framework.permissions.AllowAny', ),
+}
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+CORS_ALLOW_METHODS = (
+    "GET",
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/

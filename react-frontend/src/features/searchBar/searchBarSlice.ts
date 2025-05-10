@@ -2,14 +2,9 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 import axios from 'axios';
 import { fetchClients } from './searchBarAPI';
+import { Client } from '../../models/client';
+import { SearchBarState } from './SearchBar';
 
-// Define the state interface
-interface SearchBarState {
-  query: string;
-  results: string[];
-  loading: boolean;
-  error: string | null;
-}
 
 // Initial state
 const initialState: SearchBarState = {
@@ -20,7 +15,7 @@ const initialState: SearchBarState = {
 };
 
 // Async thunk for fetching search results
-export const searchResults = createAsyncThunk<string[], string>(
+export const searchResults = createAsyncThunk<Client[], string>(
   'searchBar/searchResults',
   async (query: string) => {
     const response = await fetchClients(query);
@@ -41,14 +36,17 @@ const searchBarSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(searchResults.pending, (state) => {
+        console.log('Fetching search results...');
         state.loading = true;
         state.error = null;
       })
-      .addCase(searchResults.fulfilled, (state, action: PayloadAction<string[]>) => {
+      .addCase(searchResults.fulfilled, (state, action: PayloadAction<Client[]>) => {
+        console.log('Search results fetched successfully:', action.payload);
         state.loading = false;
         state.results = action.payload;
       })
       .addCase(searchResults.rejected, (state, action) => {
+        console.error('Error fetching search results:', action.error);
         state.loading = false;
         state.error = action.error.message || 'An error occurred';
       });
