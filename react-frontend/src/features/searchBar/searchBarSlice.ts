@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
-import axios from 'axios';
 import { fetchClients } from './searchBarAPI';
 import { Client } from '../../models/client';
 import { SearchBarState } from './SearchBar';
@@ -24,7 +23,6 @@ export const searchResults = createAsyncThunk<Client[], string>(
   }
 );
 
-// Create the slice
 const searchBarSlice = createSlice({
   name: 'searchBar',
   initialState,
