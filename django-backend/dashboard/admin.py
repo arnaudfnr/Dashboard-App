@@ -1,43 +1,32 @@
 from django.contrib import admin
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path
-from django.views.generic.list import ListView
 from rest_framework import generics
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.response import Response
 
-from dashboard.models import Client, Consumption
+from dashboard.models import Client, CustomPagination
 from .serializer import ClientSerializer
 
 import logging
 
 logger = logging.getLogger(__name__)
 
-class CustomPagination(PageNumberPagination):
-    page_size = 15
-
-    def get_paginated_response(self, data):
-        logger.debug(f"Paginated data: {data}")
-        return Response({
-            'count': self.page.paginator.count,
-            'page_number': self.page.paginator.num_pages,
-            'has_next': self.page.has_next(),
-            'has_previous': self.page.has_previous(),
-            'next': self.get_next_link(),
-            'previous': self.get_previous_link(),
-            'results': data,
-            })
-
 class AdminClientsView(generics.ListAPIView):
-    queryset = Client.objects.all().annotate_has_elec_heating().annotate_anomaly()
+    queryset = Client.objects.all()
     serializer_class = ClientSerializer
     pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.annotate_has_elec_heating().annotate_anomaly()
+        return queryset
 
 
 class DashboardAdminSite(admin.sites.AdminSite):
     def get_urls(self):
+        logging.debug("DashboardAdminSite.get_urls() called")
         urls = super().get_urls()
         urls = [
-                   path("clients", staff_member_required(AdminClientsView.as_view())),
+                   path("clients", staff_member_required(AdminClientsView.as_view()), name="admin_clients"),
                ] + urls
+        logging.debug("DashboardAdminSite.get_urls() urls: %s", urls)
         return urls

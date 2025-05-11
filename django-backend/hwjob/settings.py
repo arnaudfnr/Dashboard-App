@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "dashboard.apps.DashboardConfig",
     "dashboard.apps.DashboardAdminConfig",
+    'fixture_magic',
 ]
 
 MIDDLEWARE = [
@@ -152,6 +153,6 @@ LOGGING = {
     },
     "root": {
         "handlers": ["console"],
-        "level": "DEBUG",
+        "level": "INFO",
     },
 }

@@ -1,45 +1,62 @@
-from django.test import Client as DjClient
-from django.test import TestCase
-from django.urls import reverse
+from django.urls import path, reverse
+from django.contrib.auth.models import User
 
-from dashboard.models import Client
+from rest_framework.test import APITestCase, URLPatternsTestCase
+from rest_framework import status
+from dashboard.admin import DashboardAdminSite
 
+class AdminTests(APITestCase, URLPatternsTestCase):
+    fixtures = ["clients.json"]
 
-class DashBoardTestCase(TestCase):
-    fixtures = ["clients", "consumptions"]
+    urlpatterns = [
+        path('admin/', DashboardAdminSite().urls),
+    ]
 
-
-class HttpCodeTestCase(DashBoardTestCase):
     def setUp(self):
-        self.djclient = DjClient()
+        self.admin_user = User.objects.create_superuser(
+            username='admin',
+            password='admin',
+            email='admin@example.com'
+        )
+        self.client.login(username='admin', password='admin')
 
-    def assertSuccess(self, response, msg_prefix):
-        status_code = response.status_code
-        failure_msg = (
-                              msg_prefix and msg_prefix + " " or ""
-                      ) + f"expected success status code (200-299)"
-        self.assertGreaterEqual(status_code, 200, failure_msg)
-        self.assertLess(status_code, 300, failure_msg)
+    def test_access_admin_client(self):
+        url = reverse('admin:admin_clients')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 3)
 
-    def assertGet(self, path):
-        response = self.djclient.get(path)
-        self.assertSuccess(response, f"{path}")
 
-    def assert404(self, path):
-        response = self.djclient.get(path)
-        self.assertEqual(response.status_code, 404)
+class DashboardAPITestCase(APITestCase):
+    fixtures = ["clients.json", "consumptions.json"]
 
-    def test_clients_list_view(self):
-        path = reverse("dashboard:clients_list")
-        self.assertGet(path)
+    def test_search_clients(self):
+        url = reverse('dashboard:search_clients')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 3)
 
-    def test_404_consumption_view(self):
-        client_id = 0
-        path = reverse("dashboard:consumption_details", kwargs={"client_id": client_id})
-        self.assert404(path)
+    def test_search_clients_with_id_query(self):
+        url = reverse('dashboard:search_clients')
+        response = self.client.get(url, QUERY_STRING='id=2', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
 
-    def test_consumption_view(self):
-        clients_ids = Client.objects.values_list("pk", flat=True)
-        for cid in clients_ids:
-            path = reverse("dashboard:consumption_details", kwargs={"client_id": cid})
-            self.assertGet(path)
+    def test_search_clients_with_full_name_query(self):
+        url = reverse('dashboard:search_clients')
+        response = self.client.get(url, QUERY_STRING='full_name=Jennifer Boyer', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 1)
+
+    def test_search_clients_with_full_name_query(self):
+        url = reverse('dashboard:search_clients')
+        response = self.client.get(url, QUERY_STRING='search=Larson', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 2)
+
+    def test_get_consumption(self):
+        url = reverse('dashboard:consumption_details')
+        response = self.client.get(url, QUERY_STRING='client_id=2', format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['count'], 102)
+

@@ -1,6 +1,7 @@
 from datetime import date
+import logging
+
 from django.shortcuts import render
-from dashboard.models import Consumption
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -8,9 +9,8 @@ from rest_framework import status, generics, filters
 
 import plotly.express as px
 
-from dashboard.models import Client
-from .serializer import ClientSerializer
-import logging
+from dashboard.models import Client, Consumption, CustomPagination
+from .serializer import ClientSerializer, ConsumptionSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -42,9 +42,25 @@ def consumption_view(request, client_id):
     return render(request, "dashboard/consumption_detail.html", context)
 
 
+class ConsumptionView(generics.ListAPIView):
+    serializer_class = ConsumptionSerializer
+    queryset = Consumption.objects.all()
+    pagination_class = CustomPagination
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['client_id']
+
+
 class SearchClientView(generics.ListAPIView):
     serializer_class = ClientSerializer
-    queryset = Client.objects.all().annotate_has_elec_heating().annotate_anomaly()
+    queryset = Client.objects.all()
+    pagination_class = CustomPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['id', 'full_name']
     search_fields = ['full_name']
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = self.filter_queryset(queryset)
+        queryset = queryset.annotate_has_elec_heating().annotate_anomaly()
+        logger.debug(f"Search Client Query : {queryset.query}")
+        return queryset

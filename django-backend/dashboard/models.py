@@ -1,9 +1,10 @@
+import logging
+
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.db.models import F, Subquery, Sum, OuterRef, Exists, Case, When
-from django.urls import reverse
-
-import logging
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +62,11 @@ class Client(models.Model):
     full_name = models.CharField("full name", max_length=50)
     objects = ClientQuerySet.as_manager()
 
+    class Meta:
+        ordering = ('id',)
+
     def __str__(self):
         return f"Client {self.pk}: {self.full_name}"
-
 
 class Consumption(MonthMixin):
     """
@@ -83,5 +86,18 @@ class Consumption(MonthMixin):
     def __str__(self):
         return f"Conso of {self.client.id} ({self.month}/{self.year}): {self.kwh_consumed}"
 
-    def get_absolute_url(self):
-        return reverse("dashboard:consumption_details", kwargs={"client_id": self.pk})
+
+class CustomPagination(PageNumberPagination):
+    page_size = 15
+
+    def get_paginated_response(self, data):
+        logger.debug(f"Paginated data: {data}")
+        return Response({
+            'count': self.page.paginator.count,
+            'page_number': self.page.paginator.num_pages,
+            'has_next': self.page.has_next(),
+            'has_previous': self.page.has_previous(),
+            'next': self.get_next_link(),
+            'previous': self.get_previous_link(),
+            'results': data,
+            })
