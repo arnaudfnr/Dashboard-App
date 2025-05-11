@@ -16,8 +16,13 @@ export function searchClients(query: string) {
   return axiosClient.get(`/clients/?${query}`).then(response => response);
 };
 
-export function fetchClients() {
-  return axiosClient.get(`/clients/`).then(response => response);
+/*
+Here I did not use the endpoint admin/clients to fetch the clients
+because I did not want to set authentication on React side.
+I understood it was not an essential part of the technical test.
+*/
+export function fetchClients(page: number) {
+  return axiosClient.get(`/clients/?page=${page}`).then(response => response);
 };
 
 export function fetchConsumptions(clientId: string) {

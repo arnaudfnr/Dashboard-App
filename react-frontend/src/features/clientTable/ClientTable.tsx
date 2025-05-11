@@ -1,38 +1,47 @@
-import styles from './ClientTable.module.css';
-import { ClientEntry } from './ClientEntry';
 import Client from '../../models/client';
-
-export interface ClientTableState {
-    query: string;
-    clients: Client[];
-    loading: boolean;
-    error: string | null;
-}
+import { ClientTableHeader } from './ClientTableHeader';
+import { Paper, Table, TableBody, TableContainer, TablePagination, TableRow } from '@mui/material';
+import { ClientTableBody } from './ClientTableBody';
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { ClientTableState, getClientPage, selectClientTable, setClientPage, setError, setPage } from './clientTableSlice';
+import { Provider } from 'react-redux';
+import { useEffect } from 'react';
 
 export interface ClientTableProps {
     clients: Client[];
+    count: number;
 }
 
+export const ROWS_PER_PAGE = 10;
 
-export function ClientTable({ clients }: ClientTableProps) {
+export function ClientTable({ clients, count }: ClientTableProps) {
+    const dispatch = useAppDispatch();
+    const { page, clientPage, loading, error } = useAppSelector(selectClientTable) as ClientTableState;
+
+    useEffect(() => {
+        dispatch(setClientPage(clients));
+    }, [dispatch, clients]);
+
+    const handleChangePage = (_: unknown, newPage: number) => {
+        dispatch(setPage(newPage));
+        dispatch(getClientPage(newPage));
+    };
+
     return (
-        <table className={styles['clients-list']}>
-            <thead>
-                <tr>
-                    <th>Id</th>
-                    <th>Name</th>
-                    <th className={styles['text-center']}>Heating</th>
-                    <th className={styles['text-center']}>Health</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                {clients.map((client) => (
-                    <tr key={client.id}>
-                        <ClientEntry client={client} />
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+            <TableContainer sx={{ maxHeight: 440 }}>
+                <Table stickyHeader aria-label="sticky table">
+                    <ClientTableHeader />
+                    <ClientTableBody clients={clientPage} />
+                </Table>
+            </TableContainer>
+            <TablePagination
+                component="div"
+                count={count}
+                rowsPerPage={ROWS_PER_PAGE}
+                page={page}
+                onPageChange={handleChangePage}
+            />
+        </Paper>
     );
 }

@@ -5,6 +5,7 @@ import { Suspense } from "react";
 export function ConsumptionDetails() {
     const { client } = useLocation().state;
     const { conso } = useLoaderData();
+    console.log("Client state", client);
     console.log("ConsumptionDetails", conso);
     return (
         <div>

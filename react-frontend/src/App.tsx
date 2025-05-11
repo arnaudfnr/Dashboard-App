@@ -4,8 +4,6 @@ import ClientList from './routes/ClientList';
 import ConsumptionDetails from './routes/ConsumptionDetails';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { fetchClients, fetchConsumptions } from './app/axiosClient';
-import Page from './models/page';
-import NavBar from './components/NavBar';
 
 const router = createBrowserRouter([
   {
@@ -29,9 +27,9 @@ const router = createBrowserRouter([
         path: 'admin/clients',
         element: <ClientList />,
         loader: async () => {
-          const response = await fetchClients();
-          console.log("ClientList", response.data.results);
-          return { clients: response.data.results };
+          const data = (await fetchClients(1)).data;
+          console.log("ClientList", data.results);
+          return { count: data.count, clients: data.results };
         }
       }
     ]

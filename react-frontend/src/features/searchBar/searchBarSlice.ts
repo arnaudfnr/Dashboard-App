@@ -13,7 +13,7 @@ const initialState: SearchBarState = {
   error: null,
 };
 
-// Async thunk for 
+// Async thunk for calling backend API and query the client table. 
 export const searchResults = createAsyncThunk<Client[], string>(
   'searchBar/searchClient',
   async (query: string) => {

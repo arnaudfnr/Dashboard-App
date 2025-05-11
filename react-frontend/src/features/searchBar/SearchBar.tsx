@@ -15,10 +15,6 @@ export interface SearchBarState {
   error: string | null;
 }
 
-function setQueryString(query: string): string {
-  return isNaN(Number(query)) ? `full_name=${query}` : `id=${query}`;
-}
-
 export function SearchBar() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
