@@ -88,7 +88,7 @@ class Consumption(MonthMixin):
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 15
+    page_size = 12
 
     def get_paginated_response(self, data):
         logger.debug(f"Paginated data: {data}")

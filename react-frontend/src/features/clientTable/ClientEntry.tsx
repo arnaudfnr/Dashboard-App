@@ -11,7 +11,7 @@ export function ClientEntry({ client }: ClientEntryProps) {
             <td>{client.id}</td>
             <td>{client.full_name}</td>
             <td>
-                {client.has_elec_heat ? (
+                {client.has_elec_heating ? (
                     <i className={`${styles.icon} ${styles['fill-yellow']}`} data-eva="flash"></i>
                 ) : (
                     <i className={`${styles.icon} ${styles['fill-gray']}`} data-eva="flash-off"></i>

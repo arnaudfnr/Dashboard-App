@@ -40,7 +40,8 @@ export function SearchBar() {
     if (isSearchClicked) {
       if (suggestions.length === 1) {
         const client = suggestions[0];
-        navigate(`/consumption/${client.id}`);
+        // Go to dashboard and pass client information to the state
+        navigate(`/consumption/${client.id}`, { state: { client } });
       } else if (suggestions.length > 1) {
         dispatch(setError('Multiple results found, select a client from the suggestions'));
       } else {
