@@ -1,4 +1,3 @@
-import React from 'react';
 import styles from './ClientTable.module.css';
 import { ClientEntry } from './ClientEntry';
 import Client from '../../models/client';
@@ -29,7 +28,9 @@ export function ClientTable({ clients }: ClientTableProps) {
             </thead>
             <tbody>
                 {clients.map((client) => (
-                    <ClientEntry client={client} />
+                    <tr key={client.id}>
+                        <ClientEntry client={client} />
+                    </tr>
                 ))}
             </tbody>
         </table>

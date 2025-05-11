@@ -1,13 +1,12 @@
-import React from 'react';
 import styles from './SearchBar.module.css';
 import Client from '../../models/client';
 
 interface SuggestionsProps {
-    results: Client[];
+    suggestionList: Client[];
     onSuggestionClick: (suggestion: string) => void;
 }
 
-export function Suggestions({ results, onSuggestionClick }: SuggestionsProps) {
+export function Suggestions({ suggestionList: results, onSuggestionClick }: SuggestionsProps) {
     return (
         <ul className={styles['suggestions']}>
             {results.map((result, index) => (

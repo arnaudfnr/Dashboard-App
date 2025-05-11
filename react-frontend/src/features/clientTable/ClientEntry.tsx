@@ -7,7 +7,7 @@ interface ClientEntryProps {
 
 export function ClientEntry({ client }: ClientEntryProps) {
     return (
-        <tr key={client.id}>
+        <>
             <td>{client.id}</td>
             <td>{client.full_name}</td>
             <td>
@@ -33,7 +33,7 @@ export function ClientEntry({ client }: ClientEntryProps) {
             <td>
                 <a
                     className={styles['vertical-middle']}
-                    href={`/consumption-details/${client.id}`}
+                    href={`/consumption/${client.id}`}
                 >
                     <span className={`${styles.hidden} ${styles['md-inline']}`}>
                         See consumption
@@ -44,7 +44,7 @@ export function ClientEntry({ client }: ClientEntryProps) {
                     ></i>
                 </a>
             </td>
-        </tr>
+        </>
     )
 
 }

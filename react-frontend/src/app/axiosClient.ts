@@ -11,3 +11,15 @@ axiosClient.defaults.headers.common = {
 
 //All request will wait 2 seconds before timeout
 axiosClient.defaults.timeout = 2000;
+
+export function searchClients(query: string) {
+  return axiosClient.get(`/clients/?${query}`).then(response => response);
+};
+
+export function fetchClients() {
+  return axiosClient.get(`/clients/`).then(response => response);
+};
+
+export function fetchConsumptions(clientId: string) {
+  return axiosClient.get(`/consumption/?client_id=${clientId}`).then(response => response);
+}

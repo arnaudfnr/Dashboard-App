@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@canvasjs/charts": "^3.12.13",
     "@reduxjs/toolkit": "^1.8.1",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.0.1",
@@ -12,6 +13,7 @@
     "@types/react": "^18.0.6",
     "@types/react-dom": "^18.0.2",
     "axios": "^1.9.0",
+    "canvasjs": "^1.8.3",
     "lodash.debounce": "^4.0.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
@@ -46,6 +48,9 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9"
+    "@canvasjs/react-charts": "^1.0.2",
+    "@types/lodash.debounce": "^4.0.9",
+    "bootstrap": "^5.3.6",
+    "react-bootstrap": "^2.10.9"
   }
 }

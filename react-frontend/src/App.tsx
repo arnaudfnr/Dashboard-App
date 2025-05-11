@@ -1,39 +1,75 @@
-import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
+import { RouterProvider, NavLink, useRouteError, useNavigation, BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './routes/Home';
 import ClientList from './routes/ClientList';
-import ConsumptionDetails from './routes/ConsumpptionDetails';
-import { NavBar } from './components/NavBar';
-import Page from './models/page'
+import ConsumptionDetails from './routes/ConsumptionDetails';
+import { createBrowserRouter, Outlet } from 'react-router-dom';
+import { fetchClients, fetchConsumptions } from './app/axiosClient';
+import Page from './models/page';
+import NavBar from './components/NavBar';
 
-const homePage: Page = {
-  title: 'Home',
-  path: '/',
-  component: Home,
-};
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Root />,
+    errorElement: <PageError />,
+    children: [
+      {
+        path: 'consumption/:clientId',
+        element: <ConsumptionDetails />,
+        loader: async ({ params }) => {
+          if (!params.clientId) {
+            throw new Error("Client ID is required");
+          }
+          const response = await fetchConsumptions(params.clientId);
+          console.log("ConsumptionDetails", response);
+          return { conso: response.data.results };
+        }
+      },
+      {
+        path: 'admin/clients',
+        element: <ClientList />,
+        loader: async () => {
+          const response = await fetchClients();
+          console.log("ClientList", response.data.results);
+          return { clients: response.data.results };
+        }
+      }
+    ]
+  }
+]);
 
-const clientListPage: Page = {
-  title: 'Client List',
-  path: '/admin/clients',
-  component: ClientList,
-};
-
-const consumptionPage: Page = {
-  title: 'Search',
-  path: '/consumption:id',
-  component: ConsumptionDetails,
-};
-
-const App = () => {
+function PageError() {
+  const error = useRouteError();
+  console.error(error);
   return (
-    <Router>
-      <NavBar pages={[homePage, clientListPage, consumptionPage]} />
-      <Routes>
-        <Route path={homePage.path} element={<homePage.component />} />
-        <Route path={clientListPage.path} element={<clientListPage.component />} />
-        <Route path={consumptionPage.path} element={<consumptionPage.component />} />
-      </Routes>
-    </ Router>
+    <div>
+      <h1>Oops! Something went wrong.</h1>
+      <p>{error?.toString()}</p>
+    </div>
   );
-};
+}
+
+function Root() {
+  const { state } = useNavigation();
+  return <>
+    <header>
+      <nav>
+        <NavLink to="/">Home</NavLink>
+        <NavLink to="/admin/clients">Client List</NavLink>
+        <NavLink to="/consumption/">Consumption Details</NavLink>
+
+      </nav>
+    </header>
+    <div className="content">
+      {state === 'loading' && <p>Loading...</p>}
+      <Home />
+      <Outlet />
+    </div>
+  </>;
+}
+
+function App() {
+  return <RouterProvider router={router} />;
+}
 
 export default App;
