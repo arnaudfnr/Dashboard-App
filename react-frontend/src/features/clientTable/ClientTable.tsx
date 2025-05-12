@@ -1,10 +1,9 @@
 import Client from '../../models/client';
 import { ClientTableHeader } from './ClientTableHeader';
-import { Paper, Table, TableBody, TableContainer, TablePagination, TableRow } from '@mui/material';
+import { Paper, Table, TableContainer, TablePagination } from '@mui/material';
 import { ClientTableBody } from './ClientTableBody';
 import { useAppDispatch, useAppSelector } from '../../app/hooks';
 import { ClientTableState, getClientPage, selectClientTable, setClientPage, setError, setPage } from './clientTableSlice';
-import { Provider } from 'react-redux';
 import { useEffect } from 'react';
 
 export interface ClientTableProps {
@@ -39,6 +38,7 @@ export function ClientTable({ clients, count }: ClientTableProps) {
                 component="div"
                 count={count}
                 rowsPerPage={ROWS_PER_PAGE}
+                rowsPerPageOptions={[]}
                 page={page}
                 onPageChange={handleChangePage}
             />

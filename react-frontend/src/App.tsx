@@ -5,6 +5,8 @@ import ConsumptionDetails from './routes/ConsumptionDetails';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { fetchClients, fetchConsumptions } from './app/axiosClient';
 import HeaderBar from './components/HeaderBar';
+import { Container } from '@mui/material';
+import PageError from './components/PageError';
 
 const router = createBrowserRouter([
   {
@@ -41,28 +43,20 @@ const router = createBrowserRouter([
   }
 ]);
 
-function PageError() {
-  const error = useRouteError();
-  console.error(error);
-  return (
-    <div>
-      <h1>Oops! Something went wrong.</h1>
-      <p>{error?.toString()}</p>
-    </div>
-  );
-}
-
 function Root() {
-  const { state } = useNavigation();
   return <>
     <header>
       <HeaderBar />
     </header>
-
-    <section>
-      {state === 'loading' && <p>Loading...</p>}
+    <Container sx={{
+      maxWidth: '100%',
+      paddingTop: {
+        xs: '64px',
+        sm: '80px',
+      },
+    }}>
       <Outlet />
-    </section>
+    </Container>
   </>;
 }
 

@@ -1,11 +1,16 @@
+import { Box } from '@mui/material';
 import logo from '../assets/hwlogo.png';
-import styles from './Routes.module.css';
+import styles from './logo.module.css'
+
 
 export function Home() {
     return (
-        <div className={styles['feature-container']}>
-            <img className={styles.logo} src={logo} alt='logo'></img>
-        </div>
+        <Box
+            component="img"
+            src={logo}
+            alt="logo"
+            className={styles.logo}
+        />
     );
 
 }

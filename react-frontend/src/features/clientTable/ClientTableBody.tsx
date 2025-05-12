@@ -10,7 +10,6 @@ import ArrowOutwardOutlinedIcon from '@mui/icons-material/ArrowOutwardOutlined';
 import { red, yellow } from '@mui/material/colors';
 import { useNavigate } from 'react-router-dom';
 import { createTheme, Link, Tooltip } from '@mui/material';
-import { ROWS_PER_PAGE } from "./ClientTable";
 
 interface ClientTableBodyProps {
     clients: Client[];
