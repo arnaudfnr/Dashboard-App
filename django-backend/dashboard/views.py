@@ -9,7 +9,7 @@ from rest_framework import status, generics, filters
 
 import plotly.express as px
 
-from dashboard.models import Client, Consumption, CustomPagination
+from dashboard.models import Client, ClientsPagination, ConsPagination, Consumption
 from .serializer import ClientSerializer, ConsumptionSerializer
 
 logger = logging.getLogger(__name__)
@@ -45,7 +45,7 @@ def consumption_view(request, client_id):
 class ConsumptionView(generics.ListAPIView):
     serializer_class = ConsumptionSerializer
     queryset = Consumption.objects.all()
-    pagination_class = CustomPagination
+    pagination_class = ConsPagination
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['client_id']
 
@@ -53,7 +53,7 @@ class ConsumptionView(generics.ListAPIView):
 class SearchClientView(generics.ListAPIView):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
-    pagination_class = CustomPagination
+    pagination_class = ClientsPagination
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['id', 'full_name']
     search_fields = ['full_name']

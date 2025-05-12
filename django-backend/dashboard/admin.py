@@ -3,7 +3,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import path
 from rest_framework import generics
 
-from dashboard.models import Client, CustomPagination
+from dashboard.models import Client, ClientsPagination
 from .serializer import ClientSerializer
 
 import logging
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 class AdminClientsView(generics.ListAPIView):
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
-    pagination_class = CustomPagination
+    pagination_class = ClientsPagination
 
     def get_queryset(self):
         queryset = super().get_queryset()

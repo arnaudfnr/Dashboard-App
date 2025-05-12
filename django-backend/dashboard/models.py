@@ -88,8 +88,6 @@ class Consumption(MonthMixin):
 
 
 class CustomPagination(PageNumberPagination):
-    page_size = 12
-
     def get_paginated_response(self, data):
         logger.debug(f"Paginated data: {data}")
         return Response({
@@ -101,3 +99,9 @@ class CustomPagination(PageNumberPagination):
             'previous': self.get_previous_link(),
             'results': data,
             })
+    
+class ClientsPagination(CustomPagination):
+    page_size = 20
+    
+class ConsPagination(CustomPagination):
+    page_size = 12
