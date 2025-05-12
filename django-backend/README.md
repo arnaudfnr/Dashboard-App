@@ -1,7 +1,7 @@
 Django Backend API
 ====================
 
-This API is the backend side of a silmple dashboarding app.
+This API is the backend side of a simple dashboarding app.
 
 Endpoints
 ------------
