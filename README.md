@@ -1,5 +1,19 @@
 # Challenge Hello Watt
 
+## Installation
+
+### Backend
+
+Consulter le [README.md](django-backend/README.md) du dossier django-backend 
+
+### Frontend
+
+Consulter le [README.md](react-frntend/README.md) du dossier react-frontend 
+
+
+Enoncé de la mission
+------------
+
 Vous cherchez un job/stage ? Découvrez [nos offres d'emplois](https://hello-watt.welcomekit.co/).
 
 ## Votre mission
