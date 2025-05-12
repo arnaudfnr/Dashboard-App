@@ -29,7 +29,7 @@ export function ClientTableBody({ clients }: ClientTableBodyProps) {
     const navigate = useNavigate();
     return (
         <TableBody>
-            {clients.slice(0, ROWS_PER_PAGE).map((client) => {
+            {clients.map((client) => {
                 return (
                     <TableRow hover role="checkbox" tabIndex={-1} key={client.id}>
                         <TableCell>

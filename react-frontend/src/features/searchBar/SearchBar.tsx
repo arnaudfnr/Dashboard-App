@@ -57,7 +57,7 @@ export function SearchBar() {
           placeholder="Numéro client ou nom"
         />
         <button onClick={() => dispatch(setIsSearchClicked(true))} disabled={loading}>
-          {loading ? 'Searching...' : 'Search'}
+          Search
         </button>
         {error && <p>Error: {error}</p>}
         {suggestions.length > 1 && (

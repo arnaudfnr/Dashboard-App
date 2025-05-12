@@ -1,3 +1,10 @@
+.feature-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 80px 0;
+  }
+
 .logo {
     height: 110vmin;
     pointer-events: none;

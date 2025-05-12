@@ -1,9 +1,9 @@
 import logo from '../assets/hwlogo.png';
-import styles from './Home.module.css';
+import styles from './Routes.module.css';
 
 export function Home() {
     return (
-        <div>
+        <div className={styles['feature-container']}>
             <img className={styles.logo} src={logo} alt='logo'></img>
         </div>
     );

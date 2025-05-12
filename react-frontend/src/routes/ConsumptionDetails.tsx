@@ -1,6 +1,7 @@
 import { Await, useLoaderData, useLocation } from "react-router-dom";
 import ConsumptionDashboard from "../features/consumptionDashboard/ConsumptionDashboard";
 import { Suspense } from "react";
+import styles from './Routes.module.css';
 
 export function ConsumptionDetails() {
     const { client } = useLocation().state;
@@ -8,7 +9,7 @@ export function ConsumptionDetails() {
     console.log("Client state", client);
     console.log("ConsumptionDetails", conso);
     return (
-        <div>
+        <div className={styles['feature-container']}>
             <h1>Bienvenue {client.full_name}</h1>
             <Suspense fallback={<div>Loading...</div>}>
                 <Await resolve={conso}>

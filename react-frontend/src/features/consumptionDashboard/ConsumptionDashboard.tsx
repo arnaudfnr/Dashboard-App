@@ -15,7 +15,7 @@ export function ConsumptionDashboard({ client, conso }: ConsumptionDashboardProp
         label: `${item.month}/${item.year}`, // Concatenate month and year for the x-axis
         y: item.kwh_consumed,
         ...(item.month === client.anomaly_month && item.year === client.anomaly_year && {
-            markerColor: "red", // Highlight the anomaly point in red
+            color: "#d50000", // Highlight the anomaly point in red
             indexLabel: "Anomalie" // Label for the anomaly point
         })
     })).reverse(); // Reverse the order of data points to follow chronological order
@@ -34,6 +34,7 @@ export function ConsumptionDashboard({ client, conso }: ConsumptionDashboardProp
         },
         data: [{
             type: "column",
+            color: "#3CB371",
             indexLabelFontColor: "#5A5757",
             indexLabelPlacement: "outside",
             dataPoints: dataPoints

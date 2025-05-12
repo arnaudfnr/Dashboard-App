@@ -12,11 +12,11 @@ export interface ClientTableProps {
     count: number;
 }
 
-export const ROWS_PER_PAGE = 10;
+export const ROWS_PER_PAGE = 20;
 
 export function ClientTable({ clients, count }: ClientTableProps) {
     const dispatch = useAppDispatch();
-    const { page, clientPage, loading, error } = useAppSelector(selectClientTable) as ClientTableState;
+    const { page, clientPage } = useAppSelector(selectClientTable) as ClientTableState;
 
     useEffect(() => {
         dispatch(setClientPage(clients));
@@ -28,7 +28,7 @@ export function ClientTable({ clients, count }: ClientTableProps) {
     };
 
     return (
-        <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+        <Paper sx={{ height: '100%', width: '100%', overflow: 'hidden' }}>
             <TableContainer sx={{ maxHeight: 440 }}>
                 <Table stickyHeader aria-label="sticky table">
                     <ClientTableHeader />
