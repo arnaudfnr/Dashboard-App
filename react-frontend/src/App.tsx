@@ -4,6 +4,7 @@ import ClientList from './routes/ClientList';
 import ConsumptionDetails from './routes/ConsumptionDetails';
 import { createBrowserRouter, Outlet } from 'react-router-dom';
 import { fetchClients, fetchConsumptions } from './app/axiosClient';
+import HeaderBar from './components/HeaderBar';
 
 const router = createBrowserRouter([
   {
@@ -11,6 +12,10 @@ const router = createBrowserRouter([
     element: <Root />,
     errorElement: <PageError />,
     children: [
+      {
+        path: '/',
+        element: <Home />
+      },
       {
         path: 'consumption/:clientId',
         element: <ConsumptionDetails />,
@@ -51,18 +56,13 @@ function Root() {
   const { state } = useNavigation();
   return <>
     <header>
-      <nav>
-        <NavLink to="/">Home</NavLink>
-        <NavLink to="/admin/clients">Client List</NavLink>
-        <NavLink to="/consumption/">Consumption Details</NavLink>
-
-      </nav>
+      <HeaderBar />
     </header>
-    <div className="content">
+
+    <section>
       {state === 'loading' && <p>Loading...</p>}
-      <Home />
       <Outlet />
-    </div>
+    </section>
   </>;
 }
 
