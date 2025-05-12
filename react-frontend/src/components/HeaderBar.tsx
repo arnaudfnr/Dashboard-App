@@ -56,7 +56,9 @@ export default function HeaderBar(props: Props) {
       <List>
         {navItems.map((item) => (
           <ListItem key={item.label} disablePadding>
-            <ListItemButton sx={{ textAlign: 'center' }}>
+            <ListItemButton sx={{ textAlign: 'center' }} onClick={() => {
+              navigate(item.path);
+            }}>
               <ListItemText primary={item.label} />
             </ListItemButton>
           </ListItem>
@@ -88,7 +90,16 @@ export default function HeaderBar(props: Props) {
           >
             Hello Watt Fullstack Job
           </Typography>
-          <SearchBar />
+          <Box
+            sx={{
+              flexGrow: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <SearchBar />
+          </Box>
           <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
             {navItems.map((item) => (
               <Button key={item.label} sx={{ color: '#fff' }} onClick={() => {
